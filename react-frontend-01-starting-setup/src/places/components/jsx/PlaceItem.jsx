@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import Button from "../../../shared/components/FormElements/Button";
 import Card from "../../../shared/components/UIElements/jsx/Card";
 import Modal from "../../../shared/components/UIElements/jsx/Modal";
+import Map from "../../../shared/components/UIElements/jsx/Map";
 
 import "../scss/PlaceItem.scss";
 
@@ -24,7 +25,7 @@ const PlaceItem = (props) => {
         footer={<Button onClick={toggleMapHandler}>CLOSE</Button>}
       >
         <div className="map-container">
-          <h2>The Map</h2>
+          <Map center={props.coordinates} zoom={16}/>
         </div>
       </Modal>
       <li className="place-item">

@@ -7,7 +7,7 @@ import {
   VALIDATOR_REQUIRE,
 } from "../../shared/components/util/validators";
 
-import "./NewPlace.scss";
+import "./PlaceForm.scss";
 
 const formReducer = (state, action) => {
   switch (action.type) {
@@ -41,6 +41,10 @@ const NewPlace = () => {
         isValid: false,
       },
       description: {
+        value: "",
+        isValid: false,
+      },
+      address: {
         value: "",
         isValid: false,
       },

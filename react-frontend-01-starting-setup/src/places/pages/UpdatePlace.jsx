@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useParams } from "react-router";
 import Input from "../../shared/components/FormElements/Input";
 import Button from "../../shared/components/FormElements/Button";
@@ -6,6 +6,7 @@ import {
   VALIDATOR_MINLENGTH,
   VALIDATOR_REQUIRE,
 } from "../../shared/util/validators";
+import Card from "../../shared/components/UIElements/jsx/Card";
 import { useForm } from "../../shared/hooks/form-hook";
 import "./PlaceForm.scss";
 
@@ -39,32 +40,63 @@ const DUMMY_PLACES = [
 ];
 
 const UpdatePlace = () => {
-  const placeId = useParams().placeId;
-  const identifiedPlace = DUMMY_PLACES.find((p) => p.id === placeId);
+  const [isLoading, setIsLoading] = useState(true);
 
-  const [formState, inputHandler] = useForm(
+  const placeId = useParams().placeId;
+
+  const [formState, inputHandler, setFormData] = useForm(
     {
       title: {
-        value: identifiedPlace.title,
-        isValid: true,
+        value: "",
+        isValid: false,
       },
       description: {
-        value: identifiedPlace.description,
-        isValid: true,
+        value: "",
+        isValid: false,
       },
     },
-    true
+    false
   );
 
-  const placeUpdateSubmitHandler = event => {
-      event.preventDefault()
-      console.log(formState.inputs)
-  }
+  const identifiedPlace = DUMMY_PLACES.find((p) => p.id === placeId);
+  useEffect(() => {
+    if (identifiedPlace) {
+      setFormData(
+        {
+          title: {
+            value: identifiedPlace.title,
+            isValid: true,
+          },
+          description: {
+            value: identifiedPlace.description,
+            isValid: true,
+          },
+        },
+        true
+      );
+    }
+    setIsLoading(false);
+  }, [setFormData, identifiedPlace]);
+
+  const placeUpdateSubmitHandler = (event) => {
+    event.preventDefault();
+    console.log(formState.inputs);
+  };
 
   if (!identifiedPlace) {
     return (
       <div className="center">
-        <h2>Couldn't find place</h2>
+          <Card>
+        <h2>Could not find place.</h2>
+        </Card>
+      </div>
+    );
+  }
+
+  if (isLoading) {
+    return (
+      <div className="center">
+        <h2>Loading...</h2>
       </div>
     );
   }
@@ -75,7 +107,7 @@ const UpdatePlace = () => {
         id="title"
         element="input"
         type="text"
-        lable="Title"
+        label="Title"
         validators={[VALIDATOR_REQUIRE()]}
         onInput={inputHandler}
         value={formState.inputs.title.value}
@@ -84,7 +116,7 @@ const UpdatePlace = () => {
       <Input
         id="description"
         element="textarea"
-        lable="Description"
+        label="Description"
         validators={[VALIDATOR_MINLENGTH(5)]}
         onInput={inputHandler}
         value={formState.inputs.description.value}

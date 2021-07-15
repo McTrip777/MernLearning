@@ -9,9 +9,19 @@ import "../scss/PlaceItem.scss";
 
 const PlaceItem = (props) => {
   const [showMap, setShowMap] = useState(false);
+  const [showConfimModal, setShowComfirmModal] = useState(false);
 
   const toggleMapHandler = () => {
     setShowMap(!showMap);
+  };
+
+  const toggleDeleteWarningHandler = () => {
+    setShowComfirmModal(!showConfimModal);
+  };
+
+  const confirmDeleteHandler = () => {
+    console.log("Deleting...");
+    setShowComfirmModal(!showConfimModal);
   };
 
   return (
@@ -25,8 +35,22 @@ const PlaceItem = (props) => {
         footer={<Button onClick={toggleMapHandler}>CLOSE</Button>}
       >
         <div className="map-container">
-          <Map center={props.coordinates} zoom={16}/>
+          <Map center={props.coordinates} zoom={16} />
         </div>
+      </Modal>
+      <Modal
+        show={showConfimModal}
+        onCancel={toggleDeleteWarningHandler}
+        header="Are you sure?"
+        footerClass="place-item__modal-actions"
+        footer={
+          <>
+            <Button inverse onClick={toggleDeleteWarningHandler}>Cancel</Button>
+            <Button danger onClick={confirmDeleteHandler}>Yes, delete</Button>
+          </>
+        }
+      >
+        <p>Are you sure you would like to delete this place?</p>
       </Modal>
       <li className="place-item">
         <Card>
@@ -39,9 +63,11 @@ const PlaceItem = (props) => {
             <p>{props.description}</p>
           </div>
           <div className="place-item__actions">
-            <Button inverse onClick={toggleMapHandler}>VIEW ON MAP</Button>
+            <Button inverse onClick={toggleMapHandler}>
+              VIEW ON MAP
+            </Button>
             <Button to={`/places/${props.id}`}>EDIT</Button>
-            <Button danger>DELETE</Button>
+            <Button danger onClick={toggleDeleteWarningHandler}>DELETE</Button>
           </div>
         </Card>
       </li>

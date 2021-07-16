@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-
+import React, { useState, useContext } from "react";
+import { AuthContext } from "../../../shared/context/auth-context";
 import Button from "../../../shared/components/FormElements/Button";
 import Card from "../../../shared/components/UIElements/jsx/Card";
 import Modal from "../../../shared/components/UIElements/jsx/Modal";
@@ -8,20 +8,21 @@ import Map from "../../../shared/components/UIElements/jsx/Map";
 import "../scss/PlaceItem.scss";
 
 const PlaceItem = (props) => {
+    const auth = useContext(AuthContext)
   const [showMap, setShowMap] = useState(false);
   const [showConfimModal, setShowComfirmModal] = useState(false);
 
   const toggleMapHandler = () => {
-    setShowMap(!showMap);
+    setShowMap(prevMap => !prevMap);
   };
 
   const toggleDeleteWarningHandler = () => {
-    setShowComfirmModal(!showConfimModal);
+    setShowComfirmModal(prevShow => !prevShow);
   };
 
   const confirmDeleteHandler = () => {
     console.log("Deleting...");
-    setShowComfirmModal(!showConfimModal);
+    setShowComfirmModal(prevShow => !prevShow);
   };
 
   return (
@@ -66,8 +67,8 @@ const PlaceItem = (props) => {
             <Button inverse onClick={toggleMapHandler}>
               VIEW ON MAP
             </Button>
-            <Button to={`/places/${props.id}`}>EDIT</Button>
-            <Button danger onClick={toggleDeleteWarningHandler}>DELETE</Button>
+            {auth.isLoggedIn && (<Button to={`/places/${props.id}`}>EDIT</Button>)}
+            {auth.isLoggedIn && (<Button danger onClick={toggleDeleteWarningHandler}>DELETE</Button>)}
           </div>
         </Card>
       </li>

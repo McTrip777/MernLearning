@@ -10,7 +10,7 @@ import { useForm } from "../../shared/hooks/form-hook";
 import "./PlaceForm.scss";
 
 const NewPlace = () => {
-  const [formState, inputHandler] = useForm(
+  const [formState, inputHandler, setFormData, defaultSubmit] = useForm(
     {
       title: {
         value: "",
@@ -28,13 +28,13 @@ const NewPlace = () => {
     false
   );
 
-  const placeSubmitHandler = (event) => {
-    event.preventDefault();
-    console.log(formState.inputs);
-  };
+//   const placeSubmitHandler = (event) => {
+//     event.preventDefault();
+//     console.log(formState.inputs);
+//   };
 
   return (
-    <form className="place-form" onSubmit={placeSubmitHandler}>
+    <form className="place-form" onSubmit={defaultSubmit}>
       <Input
         id="title"
         element="input"

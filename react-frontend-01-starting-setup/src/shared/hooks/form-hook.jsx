@@ -5,6 +5,9 @@ const formReducer = (state, action) => {
     case "INPUT_CHANGE":
       let formISValid = true;
       for (const inputId in state.inputs) {
+        if(!state.inputs[inputId]){
+          continue
+        }
         if (inputId === action.inputId) {
           formISValid = formISValid && action.isValid;
         } else {
@@ -55,5 +58,10 @@ export const useForm = (initialInputs, initialFormValidity) => {
     });
   }, []);
 
-  return [formState, inputHandler, setFormData];
+  const defaultSubmit = event => {
+    event.preventDefault()
+    console.log(formState.inputs)
+  }
+
+  return [formState, inputHandler, setFormData, defaultSubmit];
 };

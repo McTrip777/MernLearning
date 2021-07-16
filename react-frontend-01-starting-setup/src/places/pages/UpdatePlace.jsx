@@ -44,7 +44,7 @@ const UpdatePlace = () => {
 
   const placeId = useParams().placeId;
 
-  const [formState, inputHandler, setFormData] = useForm(
+  const [formState, inputHandler, setFormData, defaultSubmit] = useForm(
     {
       title: {
         value: "",
@@ -78,10 +78,10 @@ const UpdatePlace = () => {
     setIsLoading(false);
   }, [setFormData, identifiedPlace]);
 
-  const placeUpdateSubmitHandler = (event) => {
-    event.preventDefault();
-    console.log(formState.inputs);
-  };
+//   const placeUpdateSubmitHandler = (event) => {
+//     event.preventDefault();
+//     console.log(formState.inputs);
+//   };
 
   if (!identifiedPlace) {
     return (
@@ -102,7 +102,7 @@ const UpdatePlace = () => {
   }
 
   return (
-    <form className="place-form" onSubmit={placeUpdateSubmitHandler}>
+    <form className="place-form" onSubmit={defaultSubmit}>
       <Input
         id="title"
         element="input"

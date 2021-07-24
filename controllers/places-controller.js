@@ -1,8 +1,9 @@
 const {v4:uuid} = require('uuid')
-
+const {validationResult} = require('express-validator')
 const HttpError = require('../models/http-error')
+const {getCoordsForAddress} = require('../util/location')
 
-const DUMMY_PLACES = [
+let DUMMY_PLACES = [
     {
         id: 'p1',
         title: "Empire State Building",
@@ -20,7 +21,7 @@ const DUMMY_PLACES = [
         title: "Trump Tower",
         description: 'Trump Tower in New York',
         address: '725 5th Ave, New York, NY 10022',
-        creatorId: 'u1',
+        creator: 'u1',
         location: {
             lat: 40.7624,
             lng: -73.9738
@@ -32,7 +33,7 @@ const DUMMY_PLACES = [
         title: "South Pole",
         description: 'Antarctica',
         address: 'None',
-        creatorId: 'u1',
+        creator: 'u1',
         location: {
             lat: -84.9999724,
             lng: 44.999447
@@ -50,21 +51,33 @@ exports.getPlaceById = (req, res, next) => {
     res.json({ place })
 }
 
-exports.getPlaceByUserId = (req, res, next) => {
+exports.getPlacesByUserId = (req, res, next) => {
     const userId = req.params.uid;
-    const userPlaceList = DUMMY_PLACES.find(p => {
+    const userPlaceList = DUMMY_PLACES.filter(p => {
         if (p.creator === userId) {
             return p;
         }
     })
-    if (!userPlaceList) {
+    if (!userPlaceList || userPlaceList.length === 0) {
         return next(new HttpError("Could not find a places with the given user id", 404))
     }
     res.json({ userPlaceList })
 }
 
-exports.createPlace = (req, res, next) => {
-    const { title, description, location, address, creator } = req.body
+exports.createPlace = async (req, res, next) => {
+    const errors = validationResult(req)
+    if(!errors.isEmpty()){
+        return next(new HttpError('Invalid inputs, please check your data', 422))
+    }
+    const { title, description, address, creator } = req.body
+
+    let location
+    try{
+        location = await getCoordsForAddress(address)
+    }catch(error){
+        return next(error)
+    }
+
     const createdPlace = {
         id: uuid(),
         title,
@@ -76,4 +89,34 @@ exports.createPlace = (req, res, next) => {
     DUMMY_PLACES.push(createdPlace)
     
     res.status(201).json({place: createdPlace})
+}
+
+exports.updatePlace = (req, res, next) => {
+    const errors = validationResult(req)
+    if(!errors.isEmpty()){
+        return next(HttpError('Invalid inputs, please check your data', 422))
+    }
+    const { title, description } = req.body
+    const placeId = req.params.pid
+
+    const updatePlace = {...DUMMY_PLACES.find(p => p.id === placeId)}
+    const placeIndex = DUMMY_PLACES.findIndex(p => p.id === placeId)
+
+    updatePlace.title = title
+    updatePlace.description = description
+
+    DUMMY_PLACES[placeIndex] = updatePlace 
+    
+    res.status(200).json({place: updatePlace})
+}
+
+exports.deletePlace = (req, res, next) => {
+    const placeId = req.params.pid
+
+    if(!DUMMY_PLACES.find(p => p.id === placeId)){
+        throw new HttpError('Could not find this place...', 404)
+    }
+
+    DUMMY_PLACES = DUMMY_PLACES.filter(p => p.id !== placeId)
+    res.status(200).json({message: "Deleted!"})
 }

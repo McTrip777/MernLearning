@@ -9,6 +9,7 @@ import {
 } from "../../shared/util/validators";
 import Card from "../../shared/components/UIElements/jsx/Card";
 import { AuthContext } from "../../shared/context/auth-context";
+import axios from 'axios'
 
 import "./Auth.scss";
 
@@ -54,8 +55,48 @@ const Auth = () => {
     setIsLogin((prevMode) => !prevMode);
   };
 
-  const authSubmitHandler = event => {
+  const authSubmitHandler = async event => {
       event.preventDefault()
+
+      if(isLogin){
+
+      }else{
+        try {
+          const response = await fetch('http://localhost:5000/api/users/signup', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              name: formState.inputs.name.value,
+              email: formState.inputs.email.value,
+              password: formState.inputs.password.value
+            })
+          })
+            const responseData = response.json()
+            console.log(responseData)
+        } catch (error) {
+          console.log(error)
+        }
+        
+      }
+
+      // await axios.post(`http://localhost:5000/api/users/signup`, {
+      //   body: {
+      //     name: formState.inputs.name.value,
+      //     email: formState.inputs.email.value,
+      //     password: formState.inputs.password.value
+      //   }
+      // },
+      // {
+      //   headers: {'Content-Type': 'application/json'}
+      // }).then(res => {
+      //   console.log(res.data)
+      //   const responseData = res.json()
+      //   console.log(responseData)
+      // }).catch(error => {
+      //   console.log(error)
+      // })
       auth.login()
   }
 

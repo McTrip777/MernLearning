@@ -1,68 +1,98 @@
-const {v4:uuid} = require('uuid')
-const {validationResult} = require('express-validator')
+const { v4: uuid } = require('uuid')
+const { validationResult } = require('express-validator')
 
 const HttpError = require('../models/http-error')
+const User = require('../models/user')
 
-const DUMMY_USERS = [
-    {
-        id: 'u1',
-        name: "Jacob",
-        email: "Jacob@test.com",
-        password: 'password'
-    },
-    {
-        id: 'u2',
-        name: "Lacey",
-        email: "Lacey@test.com",
-        password: 'password'
-    },
-    {
-        id: 'u3',
-        name: "Zech",
-        email: "Zech@test.com",
-        password: 'password'
-    },
-]
+// const DUMMY_USERS = [
+//     {
+//         id: 'u1',
+//         name: "Jacob",
+//         email: "Jacob@test.com",
+//         password: 'password'
+//     },
+//     {
+//         id: 'u2',
+//         name: "Lacey",
+//         email: "Lacey@test.com",
+//         password: 'password'
+//     },
+//     {
+//         id: 'u3',
+//         name: "Zech",
+//         email: "Zech@test.com",
+//         password: 'password'
+//     },
+// ]
 
-exports.getUsers = (req, res, next) => {
-    res.json({ users: DUMMY_USERS })
+exports.getUsers = async (req, res, next) => {
+    let users
+    try {
+        users = await User.find({}, '-password')
+    } catch (err) {
+        const error = new HttpError('Error finding users, please try again', 500)
+        return next(error)
+    }
+
+    res.json({ users: users.map(u => u.toObject({ getters: true })) })
 }
 
-exports.signupUser = (req, res, next) => {
+exports.signupUser = async (req, res, next) => {
     const errors = validationResult(req)
-    if(!errors.isEmpty()){
-        throw new HttpError('Invalid inputs, please check your data', 422)
+    if (!errors.isEmpty()) {
+        return next(new HttpError('Invalid inputs, please check your data', 422))
     }
 
     const { name, email, password } = req.body
 
-    const hasUser = DUMMY_USERS.find(u => u.email === email)
+    let existingUser
+    try {
+        existingUser = await User.findOne({ email: email })
+    } catch (err) {
+        const error = new HttpError('Could not sign up user. Try again', 500)
+        return next(error)
+    }
 
-    if(hasUser) throw new HttpError("Could not register user, email already exists")
+    if (existingUser) {
+        const error = new HttpError('User already exists, please sign in', 422)
+        return next(error)
+    }
 
-    const createdUser = {
-        id: uuid(),
+    const createdUser = new User({
         name,
         email,
-        password
+        password,
+        image: 'https://images.unsplash.com/photo-1542038784456-1ea8e935640e?ixid=MnwxMjA3fDB8MHxzZWFyY2h8MXx8cGhvdG9ncmFwaHl8ZW58MHx8MHx8&ixlib=rb-1.2.1&w=1000&q=80',
+        places: []
+    })
+
+    try {
+        await createdUser.save()
+    } catch (err) {
+        const error = new HttpError('Something went wrong signing up user', 500)
+        return next(error)
     }
 
-    DUMMY_USERS.push(createdUser)
-
-    res.status(201).json({createdUser : createdUser})
+    res.status(201).json({ user: createdUser.toObject({ getters: true }) })
 }
 
-exports.loginUser = (req, res, next) => {
+exports.loginUser = async (req, res, next) => {
     const { email, password } = req.body
-    
-    const identifiedUser = DUMMY_USERS.find(u => u.email === email)
 
-    if(!identifiedUser){
-        throw new HttpError("Could not identify user", 401)
-    }
-    if(identifiedUser.password !== password){
-        throw new HttpError("Incorrect Password for user", 401)
+    let identifiedUser
+    try {
+        identifiedUser = await User.findOne({ email: email.toLowerCase() })
+    } catch (err) {
+        const error = new HttpError('Could not log in, please try again', 500)
+        return next(error)
     }
 
-    res.status(200).json({message : 'Logged In'})
+    if (!identifiedUser) {
+        return next(new HttpError("Could not identify user", 401))
+    }
+    if (identifiedUser.password !== password) {
+        return next(new HttpError("Incorrect Password for user", 401))
+    }
+
+    res.status(200).json({ message: 'Logged In' })
 }

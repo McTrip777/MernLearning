@@ -84,9 +84,9 @@ const Auth = () => {
             auth.login();
           })
           .catch((err) => {
-            console.log(err);
+            console.log(err.response.data.message);
             setIsLoading(false);
-            setError(err.message || "Something went wrong, please try again.");
+            setError(err.response.data.message || "Something went wrong, please try again.");
           });
       } catch (err) {
         setIsLoading(false);

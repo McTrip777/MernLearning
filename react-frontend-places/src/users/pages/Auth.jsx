@@ -11,16 +11,16 @@ import ErrorModal from "../../shared/components/UIElements/jsx/ErrorModal";
 import LoadingSpinner from "../../shared/components/UIElements/jsx/LoadingSpinner";
 import Card from "../../shared/components/UIElements/jsx/Card";
 import { AuthContext } from "../../shared/context/auth-context";
-import axios from "axios";
+import { useHttpClient } from "../../shared/hooks/http-hook";
 
 import "./Auth.scss";
 
 const Auth = () => {
   const auth = useContext(AuthContext);
   const [isLogin, setIsLogin] = useState(true);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState(false);
-  const [formState, inputHandler, setFormData, defaultSubmit] = useForm(
+  const { isLoading, error, sendRequest, clearError } = useHttpClient();
+
+  const [formState, inputHandler, setFormData] = useForm(
     {
       email: {
         value: "",
@@ -62,45 +62,38 @@ const Auth = () => {
   const authSubmitHandler = async (event) => {
     event.preventDefault();
 
-    setIsLoading(true);
     if (isLogin) {
+      await sendRequest(
+        `http://localhost:5000/api/users/login`,
+        "post",
+        {
+          email: formState.inputs.email.value,
+          password: formState.inputs.password.value,
+        },
+        { "Content-Type": "application/json" }
+      ).then((res) => {
+        // console.log(res.data.user.id)
+        auth.login(res.data.user.id);
+      });
     } else {
-      try {
-        await axios
-          .post(
-            `http://localhost:5000/api/users/signup`,
-            {
-              name: formState.inputs.name.value,
-              email: formState.inputs.email.value,
-              password: formState.inputs.password.value,
-            },
-            {
-              headers: { "Content-Type": "application/json" },
-            }
-          )
-          .then((res) => {
-            console.log(res);
-            setIsLoading(false);
-            auth.login();
-          })
-          .catch((err) => {
-            console.log(err.response.data.message);
-            setIsLoading(false);
-            setError(err.response.data.message || "Something went wrong, please try again.");
-          });
-      } catch (err) {
-        setIsLoading(false);
-        setError(err.message);
-      }
+      await sendRequest(
+        `http://localhost:5000/api/users/signup`,
+        "post",
+        {
+          name: formState.inputs.name.value,
+          email: formState.inputs.email.value,
+          password: formState.inputs.password.value,
+        },
+        { "Content-Type": "application/json" }
+      ).then(res => {
+        auth.login(res.data.user.id);
+      });
     }
-  };
-  const errorHandler = () => {
-    setError(null);
   };
 
   return (
     <>
-      <ErrorModal error={error} onClear={errorHandler} />
+      <ErrorModal error={error} onClear={clearError} />
       <Card className="authentication">
         {isLoading && <LoadingSpinner asOverlay />}
         <h2>{isLogin ? "Login Required" : "Create an Account"}</h2>

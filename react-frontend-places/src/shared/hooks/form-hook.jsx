@@ -58,10 +58,5 @@ export const useForm = (initialInputs, initialFormValidity) => {
     });
   }, []);
 
-  const defaultSubmit = event => {
-    event.preventDefault()
-    console.log(formState.inputs)
-  }
-
-  return [formState, inputHandler, setFormData, defaultSubmit];
+  return [formState, inputHandler, setFormData];
 };

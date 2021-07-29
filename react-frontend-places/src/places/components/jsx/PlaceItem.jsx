@@ -4,29 +4,39 @@ import Button from "../../../shared/components/FormElements/Button";
 import Card from "../../../shared/components/UIElements/jsx/Card";
 import Modal from "../../../shared/components/UIElements/jsx/Modal";
 import Map from "../../../shared/components/UIElements/jsx/Map";
+import ErrorModal from "../../../shared/components/UIElements/jsx/ErrorModal";
+import LoadingSpinner from "../../../shared/components/UIElements/jsx/LoadingSpinner";
+import { useHttpClient } from "../../../shared/hooks/http-hook";
 
 import "../scss/PlaceItem.scss";
 
 const PlaceItem = (props) => {
-    const auth = useContext(AuthContext)
+  const auth = useContext(AuthContext);
   const [showMap, setShowMap] = useState(false);
   const [showConfimModal, setShowComfirmModal] = useState(false);
+  const { isLoading, error, sendRequest, clearError } = useHttpClient();
 
   const toggleMapHandler = () => {
-    setShowMap(prevMap => !prevMap);
+    setShowMap((prevMap) => !prevMap);
   };
 
   const toggleDeleteWarningHandler = () => {
-    setShowComfirmModal(prevShow => !prevShow);
+    setShowComfirmModal((prevShow) => !prevShow);
   };
 
-  const confirmDeleteHandler = () => {
-    console.log("Deleting...");
-    setShowComfirmModal(prevShow => !prevShow);
-  };
+  const confirmDeleteHandler = async () => {
+    setShowComfirmModal((prevShow) => !prevShow);
 
+    await sendRequest(`http://localhost:5000/api/places/${props.id}`, "delete")
+      .then((res) => {
+        props.onDelete(props.id)
+      })
+      .catch((err) => {});
+  };
+  
   return (
     <>
+      <ErrorModal error={error} onClear={clearError}/>
       <Modal
         show={showMap}
         onCancel={toggleMapHandler}
@@ -46,15 +56,20 @@ const PlaceItem = (props) => {
         footerClass="place-item__modal-actions"
         footer={
           <>
-            <Button inverse onClick={toggleDeleteWarningHandler}>Cancel</Button>
-            <Button danger onClick={confirmDeleteHandler}>Yes, delete</Button>
+            <Button inverse onClick={toggleDeleteWarningHandler}>
+              Cancel
+            </Button>
+            <Button danger onClick={confirmDeleteHandler}>
+              Yes, delete
+            </Button>
           </>
         }
       >
         <p>Are you sure you would like to delete this place?</p>
       </Modal>
       <li className="place-item">
-        <Card>
+        <Card className="place-item__content">
+          {isLoading && <LoadingSpinner asOverlay/>}
           <div className="place-item__image">
             <img src={props.image} alt={props.title} />
           </div>
@@ -67,8 +82,14 @@ const PlaceItem = (props) => {
             <Button inverse onClick={toggleMapHandler}>
               VIEW ON MAP
             </Button>
-            {auth.isLoggedIn && (<Button to={`/places/${props.id}`}>EDIT</Button>)}
-            {auth.isLoggedIn && (<Button danger onClick={toggleDeleteWarningHandler}>DELETE</Button>)}
+            {auth.userId === props.creatorId && (
+              <Button to={`/places/${props.id}`}>EDIT</Button>
+            )}
+            {auth.userId === props.creatorId && (
+              <Button danger onClick={toggleDeleteWarningHandler}>
+                DELETE
+              </Button>
+            )}
           </div>
         </Card>
       </li>

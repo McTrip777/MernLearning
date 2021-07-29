@@ -128,11 +128,11 @@ const Auth = () => {
             element="input"
             type="password"
             label="Password"
-            validators={[VALIDATOR_MINLENGTH(5)]}
+            validators={[VALIDATOR_MINLENGTH(6)]}
             onInput={inputHandler}
             value={formState.inputs.password.value}
             valid={formState.inputs.password.isValid}
-            errorText="Please enter at least 5 characters"
+            errorText="Please enter at least 6 characters"
           ></Input>
           <Button type="submit" disabled={!formState.isValid}>
             {isLogin ? "Login" : "Sign Up"}

@@ -4,27 +4,6 @@ const { validationResult } = require('express-validator')
 const HttpError = require('../models/http-error')
 const User = require('../models/user')
 
-// const DUMMY_USERS = [
-//     {
-//         id: 'u1',
-//         name: "Jacob",
-//         email: "Jacob@test.com",
-//         password: 'password'
-//     },
-//     {
-//         id: 'u2',
-//         name: "Lacey",
-//         email: "Lacey@test.com",
-//         password: 'password'
-//     },
-//     {
-//         id: 'u3',
-//         name: "Zech",
-//         email: "Zech@test.com",
-//         password: 'password'
-//     },
-// ]
-
 exports.getUsers = async (req, res, next) => {
     let users
     try {
@@ -94,5 +73,5 @@ exports.loginUser = async (req, res, next) => {
         return next(new HttpError("Incorrect Password for user", 401))
     }
 
-    res.status(200).json({ message: 'Logged In' })
+    res.status(200).json({ message: 'Logged In', user: identifiedUser.toObject({ getters: true }) })
 }

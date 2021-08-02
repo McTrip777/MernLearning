@@ -12,6 +12,7 @@ import LoadingSpinner from "../../shared/components/UIElements/jsx/LoadingSpinne
 import Card from "../../shared/components/UIElements/jsx/Card";
 import { AuthContext } from "../../shared/context/auth-context";
 import { useHttpClient } from "../../shared/hooks/http-hook";
+import ImageUpload from "../../shared/components/FormElements/ImageUpload";
 
 import "./Auth.scss";
 
@@ -40,6 +41,7 @@ const Auth = () => {
         {
           ...formState.inputs,
           name: undefined,
+          image: undefined
         },
         formState.inputs.email.isValid,
         formState.inputs.password.isValid
@@ -52,6 +54,10 @@ const Auth = () => {
             value: "",
             isValid: false,
           },
+          image: {
+            value: null,
+            isValid: false
+          }
         },
         false
       );
@@ -107,11 +113,10 @@ const Auth = () => {
               label="Your Name"
               validators={[VALIDATOR_REQUIRE()]}
               onInput={inputHandler}
-              // value={formState.inputs.email.value}
-              // valid={formState.inputs.email.isValid}
               errorText="Please enter a your name"
             ></Input>
           )}
+          {!isLogin && <ImageUpload center id={'image'} onInput={inputHandler}/>}
           <Input
             id="email"
             element="input"

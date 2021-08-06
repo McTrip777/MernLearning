@@ -3,7 +3,6 @@ const path = require('path')
 
 const express = require('express');
 const bodyParser = require('body-parser')
-const dotenv = require('dotenv').config()
 const mongoose = require('mongoose')
 
 const HttpError = require('./models/http-error')
@@ -47,7 +46,7 @@ app.use((err, req, res, next) => {
 })
 
 mongoose
-    .connect(dotenv.parsed.MONDGO_DB_CONNECTION)
+    .connect(`mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@realmcluster.q24p7.mongodb.net/${process.env.DB_NAME}?retryWrites=true&w=majority`)
     .then(() => {
         app.listen(5000)
         console.log("I am working don't worry")

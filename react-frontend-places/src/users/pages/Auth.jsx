@@ -69,7 +69,7 @@ const Auth = () => {
     event.preventDefault();
     if (isLogin) {
       await sendRequest(
-        `http://localhost:5000/api/users/login`,
+        `${process.env.REACT_APP_BACKEND_URL}/users/login`,
         "post",
         {
           email: formState.inputs.email.value,
@@ -87,7 +87,7 @@ const Auth = () => {
         formData.append('password', formState.inputs.password.value)
         formData.append('image', formState.inputs.image.value)
         await sendRequest(
-          `http://localhost:5000/api/users/signup`,
+          `${process.env.REACT_APP_BACKEND_URL}/users/signup`,
           "post",
           formData,
           { "Content-Type": "application/json" }
@@ -154,21 +154,3 @@ const Auth = () => {
 };
 
 export default Auth;
-
-// try {
-//   const response = await fetch('http://localhost:5000/api/users/signup', {
-//     method: 'POST',
-//     headers: {
-//       'Content-Type': 'application/json'
-//     },
-//     body: JSON.stringify({
-//       name: formState.inputs.name.value,
-//       email: formState.inputs.email.value,
-//       password: formState.inputs.password.value
-//     })
-//   })
-//     const responseData = response.json()
-//     console.log(responseData)
-// } catch (error) {
-//   console.log(error)
-// }

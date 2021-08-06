@@ -1,6 +1,5 @@
 const HttpError = require("../models/http-error")
 const jwt = require('jsonwebtoken')
-const dotenv = require('dotenv').config()
 
 module.exports = (req, res, next) => {
     if(req.method === 'OPTIONS'){
@@ -12,7 +11,7 @@ module.exports = (req, res, next) => {
             throw new Error('Authentication failed')
         }
 
-        const decodedToken = jwt.verify(token, dotenv.parsed.PRIVATE_TOKEN_KEY)
+        const decodedToken = jwt.verify(token, process.env.PRIVATE_TOKEN_KEY)
         req.userData = { userId: decodedToken.userId }
         next();
 

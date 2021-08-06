@@ -39,7 +39,6 @@ const UpdatePlace = () => {
     const getPlaceToUpdate = async () => {
       await sendRequest(`http://localhost:5000/api/places/${placeId}`)
         .then((res) => {
-          console.log(res.data.place);
           setLoadedPlace(res.data.place);
           let { title, description } = res.data.place;
           setFormData(
@@ -71,7 +70,8 @@ const UpdatePlace = () => {
         description: formState.inputs.description.value
       },
       {
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
+        Authorization: 'Bearer ' + auth.token
       }
     )
       .then((res) => {

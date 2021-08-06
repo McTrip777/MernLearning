@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
 
 import ErrorModal from "../../shared/components/UIElements/jsx/ErrorModal";
 import LoadingSpinner from "../../shared/components/UIElements/jsx/LoadingSpinner";

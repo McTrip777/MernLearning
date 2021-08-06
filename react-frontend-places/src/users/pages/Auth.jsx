@@ -67,7 +67,6 @@ const Auth = () => {
 
   const authSubmitHandler = async (event) => {
     event.preventDefault();
-
     if (isLogin) {
       await sendRequest(
         `http://localhost:5000/api/users/login`,
@@ -79,21 +78,24 @@ const Auth = () => {
         { "Content-Type": "application/json" }
       ).then((res) => {
         // console.log(res.data.user.id)
-        auth.login(res.data.user.id);
+        auth.login(res.data.userId, res.data.token);
       });
     } else {
-      await sendRequest(
-        `http://localhost:5000/api/users/signup`,
-        "post",
-        {
-          name: formState.inputs.name.value,
-          email: formState.inputs.email.value,
-          password: formState.inputs.password.value,
-        },
-        { "Content-Type": "application/json" }
-      ).then(res => {
-        auth.login(res.data.user.id);
-      });
+        let formData = new FormData();
+        formData.append('name', formState.inputs.name.value)
+        formData.append('email', formState.inputs.email.value)
+        formData.append('password', formState.inputs.password.value)
+        formData.append('image', formState.inputs.image.value)
+        await sendRequest(
+          `http://localhost:5000/api/users/signup`,
+          "post",
+          formData,
+          { "Content-Type": "application/json" }
+        ).then(res => {
+          auth.login(res.data.userId, res.data.token);
+        }).catch((err)=>{
+          // console.log(err.response)
+        });
     }
   };
 
@@ -116,7 +118,7 @@ const Auth = () => {
               errorText="Please enter a your name"
             ></Input>
           )}
-          {!isLogin && <ImageUpload center id={'image'} onInput={inputHandler}/>}
+          {!isLogin && <ImageUpload center id={'image'} onInput={inputHandler} errorText="Please provide an image"/>}
           <Input
             id="email"
             element="input"

@@ -2,7 +2,6 @@ const { v4: uuid } = require('uuid')
 const { validationResult } = require('express-validator')
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
-const dotenv = require('dotenv').config()
 
 const HttpError = require('../models/http-error')
 const User = require('../models/user')
@@ -66,7 +65,7 @@ exports.signupUser = async (req, res, next) => {
 
     let token;
     try {
-        token = jwt.sign({ userId: createdUser.id, email: createdUser.email }, dotenv.parsed.PRIVATE_TOKEN_KEY, { expiresIn: '1h' })
+        token = jwt.sign({ userId: createdUser.id, email: createdUser.email }, process.env.PRIVATE_TOKEN_KEY, { expiresIn: '1h' })
     } catch (err) {
         const error = new HttpError('Something went wrong signing up user', 500)
         return next(error)
@@ -104,7 +103,7 @@ exports.loginUser = async (req, res, next) => {
 
     let token;
     try {
-        token = jwt.sign({ userId: identifiedUser.id, email: identifiedUser.email }, dotenv.parsed.PRIVATE_TOKEN_KEY, { expiresIn: '1h' })
+        token = jwt.sign({ userId: identifiedUser.id, email: identifiedUser.email }, process.env.PRIVATE_TOKEN_KEY, { expiresIn: '1h' })
     } catch (err) {
         const error = new HttpError('Something went wrong logging in', 500)
         return next(error)

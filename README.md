@@ -39,8 +39,8 @@ const placeSubmitHandler = async (event) => {
 
 ## Authors
 
-Jacob McFaul
-[@McTrip777](jacob.m.mcfaul@gmail.com)
+> Jacob McFaul
+* jacob.m.mcfaul@gmail.com
 
 ## License
 

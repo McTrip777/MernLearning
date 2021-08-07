@@ -14,6 +14,7 @@
 * BackEnd - "axios", "bcryptjs", "body-parser", "dotenv", "express", "express-validator", "jsonwebtoken", "mongoose", "mongoose-unique-validator", "multer", "uuid", "nodemon"
 * DataBase - "MongoDB Atlas"
 * API - "Google Cloud Platform (Geocoding, Maps Javascript)"
+* Deploys - "Heroku (Backend)", "Netlify (Frontend)"
 
 ## Code Sample
 
@@ -35,6 +36,18 @@ const placeSubmitHandler = async (event) => {
     history.push('/')
   });
 };
+```
+
+### Heroku Setup
+```
+- npm install -g heroku
+- heroku login
+- heroku git:remote -a my-app
+```
+> Git-subtree
+* Make sure to run this from the top level of the tree:
+```
+- git subtree push --prefix path/to/subdirectory heroku master
 ```
 
 ## Authors

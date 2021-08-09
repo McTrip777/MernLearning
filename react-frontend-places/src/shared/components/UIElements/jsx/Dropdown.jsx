@@ -16,7 +16,7 @@ const Dropdown = () => {
         style={{ width: "75%", height: "75%" }}
       />
       <div className="dropdown-content" id="dropdown">
-        <NavLink to="/">
+        <NavLink to={"/profile/" + auth.userId}>
           Profile
         </NavLink>
         <NavLink onClick={auth.logout} to="/auth">

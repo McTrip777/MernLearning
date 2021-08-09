@@ -10,6 +10,7 @@ import LoadingSpinner from './shared/components/UIElements/jsx/LoadingSpinner';
 import { BrowserRouter as Router } from 'react-router-dom'
 import { AuthContext } from './shared/context/auth-context'
 import { useAuth } from './shared/hooks/auth-hook';
+import Profile from './users/pages/Profile';
 
 const Users = React.lazy(() => import('./users/pages/Users'))
 const NewPlace = React.lazy(() => import('./places/pages/NewPlace'))
@@ -24,6 +25,7 @@ const App = () => {
   if (token) {
     routes = (<Switch>
       <Route exact path="/" component={Users} />
+      <Route exact path="/profile/:userId" component={Profile} />
       <Route exact path="/places/new" component={NewPlace} />
       <Route exact path="/:userId/places" component={UserPlaces} />
       <Route path="/places/:placeId" component={UpdatePlace} />

@@ -19,9 +19,11 @@ exports.getUsers = async (req, res, next) => {
 }
 
 exports.getUserById = async (req, res, next) => {
+    const userId = req.params.uid;
     let user
     try {
-        user = await User.find(req.body.id, '-password')
+        user = await User.findById(userId, '-password')
+        console.log(user)
     } catch (err) {
         const error = new HttpError('Error finding user, please try again', 500)
         return next(error)

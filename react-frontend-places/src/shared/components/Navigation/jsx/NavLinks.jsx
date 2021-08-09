@@ -2,16 +2,18 @@ import React, { useContext, useState, useEffect } from "react";
 import { NavLink } from "react-router-dom";
 import { AuthContext } from "../../../context/auth-context";
 // import { useHttpClient } from "../../../hooks/http-hook";
+import Avatar from "../../UIElements/jsx/Avatar";
+import Dropdown from "../../UIElements/jsx/Dropdown";
 import "../scss/NavLinks.scss";
 
 const NavLinks = () => {
-//   const [loadedUser, setLoadedUser] = useState();
-//   const { isLoading, error, sendRequest, clearError } = useHttpClient();
+  //   const [loadedUser, setLoadedUser] = useState();
+  //   const { isLoading, error, sendRequest, clearError } = useHttpClient();
   const auth = useContext(AuthContext);
-  
-  useEffect(()=> {
+
+  useEffect(() => {
     // console.log(auth)
-  }, [auth])
+  }, [auth]);
 
   return (
     <ul className="nav-links">
@@ -37,8 +39,7 @@ const NavLinks = () => {
       )}
       {auth.isLoggedIn && (
         <li>
-        {/* <img src={process.env.REACT_APP_ASSET_URL + localStorage.getItem("userImage")} alt="" /> */}
-          <NavLink onClick={auth.logout} to="/auth">Logout</NavLink>
+            <Dropdown/>
         </li>
       )}
     </ul>

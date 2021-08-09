@@ -18,7 +18,7 @@ const UpdatePlace = React.lazy(() => import('./places/pages/UpdatePlace'))
 const Auth = React.lazy(() => import('./users/pages/Auth'))
 
 const App = () => {
-  const { token, login, logout, userId } = useAuth()
+  const { token, login, logout, userId, image } = useAuth()
   let routes;
 
   if (token) {
@@ -38,7 +38,7 @@ const App = () => {
     </Switch>)
   }
 
-  return <AuthContext.Provider value={{ isLoggedIn: !!token, token: token, userId: userId, login: login, logout: logout }}>
+  return <AuthContext.Provider value={{ isLoggedIn: !!token, token: token, userId: userId, image:image, login: login, logout: logout }}>
     <Router>
       <MainNavigation />
       <main>

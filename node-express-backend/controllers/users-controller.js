@@ -18,6 +18,18 @@ exports.getUsers = async (req, res, next) => {
     res.json({ users: users.map(u => u.toObject({ getters: true })) })
 }
 
+exports.getUserById = async (req, res, next) => {
+    let user
+    try {
+        user = await User.find(req.body.id, '-password')
+    } catch (err) {
+        const error = new HttpError('Error finding user, please try again', 500)
+        return next(error)
+    }
+
+    res.json({ user: user.toObject({ getters: true })})
+}
+
 exports.signupUser = async (req, res, next) => {
     const errors = validationResult(req)
     if (!errors.isEmpty()) {
@@ -71,7 +83,7 @@ exports.signupUser = async (req, res, next) => {
         return next(error)
     }
 
-    res.status(201).json({ userId: createdUser.id, email: createdUser.email, token })
+    res.status(201).json({ userId: createdUser.id, email: createdUser.email, token, image: createdUser.image })
 }
 
 exports.loginUser = async (req, res, next) => {
@@ -109,5 +121,5 @@ exports.loginUser = async (req, res, next) => {
         return next(error)
     }
 
-    res.status(200).json({ userId: identifiedUser.id, email: identifiedUser.email, token })
+    res.status(200).json({ userId: identifiedUser.id, email: identifiedUser.email, token, image: identifiedUser.image })
 }

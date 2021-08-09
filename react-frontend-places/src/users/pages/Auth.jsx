@@ -41,7 +41,7 @@ const Auth = () => {
         {
           ...formState.inputs,
           name: undefined,
-          image: undefined
+          image: undefined,
         },
         formState.inputs.email.isValid,
         formState.inputs.password.isValid
@@ -56,8 +56,8 @@ const Auth = () => {
           },
           image: {
             value: null,
-            isValid: false
-          }
+            isValid: false,
+          },
         },
         false
       );
@@ -77,25 +77,26 @@ const Auth = () => {
         },
         { "Content-Type": "application/json" }
       ).then((res) => {
-        // console.log(res.data.user.id)
+        localStorage.setItem('userImage', res.data.image)
         auth.login(res.data.userId, res.data.token);
       });
     } else {
-        let formData = new FormData();
-        formData.append('name', formState.inputs.name.value)
-        formData.append('email', formState.inputs.email.value)
-        formData.append('password', formState.inputs.password.value)
-        formData.append('image', formState.inputs.image.value)
-        await sendRequest(
-          `${process.env.REACT_APP_BACKEND_URL}/users/signup`,
-          "post",
-          formData,
-          { "Content-Type": "application/json" }
-        ).then(res => {
+      let formData = new FormData();
+      formData.append("name", formState.inputs.name.value);
+      formData.append("email", formState.inputs.email.value);
+      formData.append("password", formState.inputs.password.value);
+      formData.append("image", formState.inputs.image.value);
+      await sendRequest(
+        `${process.env.REACT_APP_BACKEND_URL}/users/signup`,
+        "post",
+        formData,
+        { "Content-Type": "application/json" }
+      )
+        .then((res) => {
+          localStorage.setItem('userImage', res.data.image)
           auth.login(res.data.userId, res.data.token);
-        }).catch((err)=>{
-          // console.log(err.response)
-        });
+        })
+        .catch((err) => {});
     }
   };
 
@@ -118,7 +119,14 @@ const Auth = () => {
               errorText="Please enter a your name"
             ></Input>
           )}
-          {!isLogin && <ImageUpload center id={'image'} onInput={inputHandler} errorText="Please provide an image"/>}
+          {!isLogin && (
+            <ImageUpload
+              center
+              id={"image"}
+              onInput={inputHandler}
+              errorText="Please provide an image"
+            />
+          )}
           <Input
             id="email"
             element="input"

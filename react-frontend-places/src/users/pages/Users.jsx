@@ -16,8 +16,7 @@ const Users = () => {
         "get",
         null,
         {
-          "Access-Control-Allow-Origin": "*",
-          "Content-Type": "application/json",
+          "Content-Type": "application/json"
         }
       )
         .then((res) => {

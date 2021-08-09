@@ -14,7 +14,13 @@ const Profile = () => {
   useEffect(() => {
     const getUserInfo = async () => {
       await sendRequest(
-        `${process.env.REACT_APP_BACKEND_URL}/users/${userId}`
+        `${process.env.REACT_APP_BACKEND_URL}/users/${userId}`,
+        "get",
+        null,
+        {
+          "Access-Control-Allow-Origin": "*",
+          "Content-Type": "application/json",
+        }
       ).then((res) => {
         console.log(res.data);
         setUser(res.data);
@@ -26,7 +32,13 @@ const Profile = () => {
   useEffect(() => {
     const getPlaces = async () => {
       await sendRequest(
-        `${process.env.REACT_APP_BACKEND_URL}/places/user/${userId}`
+        `${process.env.REACT_APP_BACKEND_URL}/places/user/${userId}`,
+        "get",
+        null,
+        {
+          "Access-Control-Allow-Origin": "*",
+          "Content-Type": "application/json",
+        }
       )
         .then((res) => {
           setPlacesList(res.data.userPlaceList);

@@ -11,8 +11,15 @@ const Users = () => {
 
   useEffect(() => {
     const getUsersRequest = async () => {
-      
-      await sendRequest(process.env.REACT_APP_BACKEND_URL + `/users`)
+      await sendRequest(
+        process.env.REACT_APP_BACKEND_URL + `/users`,
+        "get",
+        null,
+        {
+          "Access-Control-Allow-Origin": "*",
+          "Content-Type": "application/json",
+        }
+      )
         .then((res) => {
           setLoadedUsers(res.data.users);
         })
@@ -23,12 +30,12 @@ const Users = () => {
 
   return (
     <>
-    <ErrorModal error={error} onClear={clearError} />
-    {isLoading && (
-      <div className="center">
-        <LoadingSpinner asOverlay/>
-      </div>
-    )}
+      <ErrorModal error={error} onClear={clearError} />
+      {isLoading && (
+        <div className="center">
+          <LoadingSpinner asOverlay />
+        </div>
+      )}
       {!isLoading && loadedUsers && <UsersList items={loadedUsers} />}
     </>
   );
